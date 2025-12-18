@@ -1,2 +1,3 @@
 mod mod_authz_user_override.so
 mod authz_user_override.load
+mod authz_user_override.conf
