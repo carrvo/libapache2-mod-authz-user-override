@@ -1,8 +1,17 @@
 # libapache2-mod-authz-user-override
 
+This is meant to extend [mod_authz_user](https://github.com/apache/httpd/blob/040c577fdd854822a8ae2c7cd4b7989a9da853b8/modules/aaa/mod_authz_user.c) that is built-in to [httpd](https://httpd.apache.org/).
+
+## Usage
+
+```conf
+# Matches all users that start with "Wor" such as "World", "Word", "Worth", et cetera
+Require user-starts-with Wor
+```
+
 ## License
 
-   Originally obtained from https://github.com/apache/httpd/blob/040c577fdd854822a8ae2c7cd4b7989a9da853b8/modules/aaa/mod_authz_user.c on 2025-12-17
+   Originally obtained from [https://github.com/apache/httpd/blob/040c577fdd854822a8ae2c7cd4b7989a9da853b8/modules/aaa/mod_authz_user.c](https://github.com/apache/httpd/blob/040c577fdd854822a8ae2c7cd4b7989a9da853b8/modules/aaa/mod_authz_user.c) on 2025-12-17
    Changes documented within [CHANGES](./CHANGES)
 
    Copyright 2025 carrvo

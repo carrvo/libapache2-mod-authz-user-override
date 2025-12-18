@@ -17,10 +17,4 @@ Architecture: amd64
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Suggests: subversion, libapache2-mod-svn
 Homepage: https://github.com/carrvo/libapache2-mod-authz-user-override
-Description: This is a module to use SVN properties for Authorization (Authz) purposes,
- instead of the default access file.
- .
- By choosing to do it this way, you can have
- versioned fine-grained access control
- managed by the creator of the file,
- just like you would with a real filesystem!
+Description: This is meant to extend mod_authz_user that is built-in to httpd.
