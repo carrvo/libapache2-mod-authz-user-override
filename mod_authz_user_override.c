@@ -53,7 +53,7 @@ static authz_status user_check_authorization(request_rec *r,
     const ap_expr_info_t *expr = parsed_require_args;
     const char *require;
 
-    const char *t, *w;
+    const char *parsed_tmp, *require_word;
 
     if (!r->user) {
         return AUTHZ_DENIED_NO_USER;
@@ -61,20 +61,20 @@ static authz_status user_check_authorization(request_rec *r,
 
     require = ap_expr_str_exec(r, expr, &err);
     if (err) {
-        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, APLOGNO(02594)
-                      "authz_user_override authorize: require user: Can't "
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
+                      "authz_user_override authorize: require user-uri: Can't "
                       "evaluate require expression: %s", err);
         return AUTHZ_DENIED;
     }
 
-    t = require;
-    while ((w = ap_getword_conf(r->pool, &t)) && w[0]) {
-        if (!strcmp(r->user, w)) {
+    parsed_tmp = require;
+    while ((require_word = ap_getword_conf(r->pool, &parsed_tmp)) && require_word[0]) {
+        if (!strcmp(r->user, require_word)) {
             return AUTHZ_GRANTED;
         }
     }
 
-    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, APLOGNO(01663)
+    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r,
                   "access to %s failed, reason: user '%s' does not meet "
                   "'require'ments for user to be allowed access",
                   r->uri, r->user);
@@ -109,7 +109,7 @@ static const authz_provider authz_user_override_provider =
 
 static void register_hooks(apr_pool_t *p)
 {
-    ap_register_auth_provider(p, AUTHZ_PROVIDER_GROUP, "user-override",
+    ap_register_auth_provider(p, AUTHZ_PROVIDER_GROUP, "user-uri",
                               AUTHZ_PROVIDER_VERSION,
                               &authz_user_override_provider, AP_AUTH_INTERNAL_PER_CONF);
 }
