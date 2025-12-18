@@ -25,6 +25,8 @@
 #include "http_protocol.h"
 #include "http_request.h"
 
+#include <regex.h>
+
 #include "mod_auth.h"
 
 typedef struct {
@@ -49,32 +51,61 @@ static authz_status user_check_authorization(request_rec *r,
                                              const char *require_args,
                                              const void *parsed_require_args)
 {
-    const char *err = NULL;
-    const ap_expr_info_t *expr = parsed_require_args;
-    const char *require;
+    const char *require_word;
+    const char *location_end;
 
-    const char *t, *w;
+    // Source - https://stackoverflow.com/a/1085120
+    // Posted by Laurence Gonsalves, modified by community. See post 'Timeline' for change history
+    // Retrieved 2025-12-17, License - CC BY-SA 3.0       
+    regex_t *regex = apr_pcalloc(pool, sizeof(regex_t));
+    regmatch_t *match = apr_pcalloc(pool, sizeof(regmatch_t));
+    int reti;
+    char msgbuf[100];
+
+    /* Compile regular expression */
+    reti = regcomp(regex, ".*\\(?<user>[-_\.\w\d]+\\)/?$", 0);
+    if (reti) {
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
+                  "Could not compile regex");
+        /* Free memory allocated to the pattern buffer by regcomp() */
+        regfree(regex);
+        return AUTHZ_DENIED;
+    }
+
+    /* Execute regular expression */
+    reti = regexec(regex, r->uri, 1, match, 0);
+    if (!reti) {
+        
+    }
+    else if (reti == REG_NOMATCH) {
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
+                  "Regex no match found: %s", r->uri);
+        /* Free memory allocated to the pattern buffer by regcomp() */
+        regfree(regex);
+        return AUTHZ_DENIED;
+    }
+    else {
+        regerror(reti, regex, msgbuf, sizeof(msgbuf));
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
+                  "Regex match failed for %s: %s", r->uri, msgbuf);
+        /* Free memory allocated to the pattern buffer by regcomp() */
+        regfree(regex);
+        return AUTHZ_DENIED;
+    }
+    /* Free memory allocated to the pattern buffer by regcomp() */
+    regfree(regex);
 
     if (!r->user) {
         return AUTHZ_DENIED_NO_USER;
     }
 
-    require = ap_expr_str_exec(r, expr, &err);
-    if (err) {
-        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, APLOGNO(02594)
-                      "authz_user_override authorize: require user: Can't "
-                      "evaluate require expression: %s", err);
-        return AUTHZ_DENIED;
-    }
-
-    t = require;
-    while ((w = ap_getword_conf(r->pool, &t)) && w[0]) {
-        if (!strcmp(r->user, w)) {
+    while ((require_word = ap_getword_conf(r->pool, &require_args)) && require_word[0]) {
+        if (!strcmp(r->user, require_word)) {
             return AUTHZ_GRANTED;
         }
     }
 
-    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, APLOGNO(01663)
+    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r,
                   "access to %s failed, reason: user '%s' does not meet "
                   "'require'ments for user to be allowed access",
                   r->uri, r->user);
@@ -82,29 +113,10 @@ static authz_status user_check_authorization(request_rec *r,
     return AUTHZ_DENIED;
 }
 
-static const char *user_parse_config(cmd_parms *cmd, const char *require_line,
-                                     const void **parsed_require_line)
-{
-    const char *expr_err = NULL;
-    ap_expr_info_t *expr;
-
-    expr = ap_expr_parse_cmd(cmd, require_line, AP_EXPR_FLAG_STRING_RESULT,
-            &expr_err, NULL);
-
-    if (expr_err)
-        return apr_pstrcat(cmd->temp_pool,
-                           "Cannot parse expression in require line: ",
-                           expr_err, NULL);
-
-    *parsed_require_line = expr;
-
-    return NULL;
-}
-
 static const authz_provider authz_user_override_provider =
 {
     &user_check_authorization,
-    &user_parse_config,
+    NULL,
 };
 
 static void register_hooks(apr_pool_t *p)

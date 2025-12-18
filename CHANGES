@@ -1,3 +1,10 @@
 string replace `authz_user` for `authz_user_override` 
 remove `validuser_check_authorization` and associated references
 modify `ap_register_auth_provider` from `user` to `user-override`
+remove `user_parse_config` and associated references
+replace use of `parsed_require_args` with `require_args` directly
+rename local variables
+add `#include <regex.h>`
+add regular expressions based upon https://stackoverflow.com/a/1085120
+remove `APLOGNO` from log messages
+
