@@ -1,0 +1,13 @@
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/files
+debian/libapache2-mod-authz-user-override.debhelper.log
+debian/libapache2-mod-authz-user-override.postinst.debhelper
+debian/libapache2-mod-authz-user-override.postrm.debhelper
+debian/libapache2-mod-authz-user-override.prerm.debhelper
+debian/libapache2-mod-authz-user-override.substvars
+debian/libapache2-mod-authz-user-override/
+mod_authz_user_override.*l*
+.libs/
+package/
+
