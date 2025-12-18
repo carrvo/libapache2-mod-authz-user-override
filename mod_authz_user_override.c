@@ -53,7 +53,8 @@ static authz_status user_check_authorization(request_rec *r,
     const ap_expr_info_t *expr = parsed_require_args;
     const char *require;
 
-    const char *parsed_tmp, *require_word, *user_tmp;
+    const char *parsed_tmp, *require_word;
+    char *user_tmp;
 
     if (!r->user) {
         return AUTHZ_DENIED_NO_USER;
