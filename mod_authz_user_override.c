@@ -53,7 +53,7 @@ static authz_status user_check_authorization(request_rec *r,
     const ap_expr_info_t *expr = parsed_require_args;
     const char *require;
 
-    const char *parsed_tmp, *require_word;
+    const char *parsed_tmp, *require_word, *user_tmp;
 
     if (!r->user) {
         return AUTHZ_DENIED_NO_USER;
@@ -69,7 +69,9 @@ static authz_status user_check_authorization(request_rec *r,
 
     parsed_tmp = require;
     while ((require_word = ap_getword_conf(r->pool, &parsed_tmp)) && require_word[0]) {
-        if (!strcmp(r->user, require_word)) {
+        // truncate the user because it could be a sub-path of the provided value
+        (void)apr_cpystrn(user_tmp, r->user, strlen(require_word));
+        if (!strcmp(user_tmp, require_word)) {
             return AUTHZ_GRANTED;
         }
     }
