@@ -53,7 +53,7 @@ static authz_status user_check_authorization(request_rec *r,
     const ap_expr_info_t *expr = parsed_require_args;
     const char *require;
 
-    const char *parsed_tmp, *require_word;
+    const char *parsed_tmp, *require_word, *last_word;
     char *user_tmp;
     apr_size_t word_len;
 
@@ -78,12 +78,14 @@ static authz_status user_check_authorization(request_rec *r,
         if (!strcmp(user_tmp, require_word)) {
             return AUTHZ_GRANTED;
         }
+        last_word = require_word;
     }
 
     ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r,
                   "access to %s failed, reason: user '%s' does not meet "
-                  "'require'ments for user to be allowed access",
-                  r->uri, r->user);
+                  "'require'ments for user to be allowed access "
+                  "(last checked '%s')",
+                  r->uri, r->user, last_word);
 
     return AUTHZ_DENIED;
 }

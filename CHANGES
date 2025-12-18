@@ -4,3 +4,4 @@ modify `ap_register_auth_provider` from `user` to `user-starts-with`
 rename local variables
 remove `APLOGNO` from log messages
 add a step to truncate the user for comparison
+modify log message to show result of expr
