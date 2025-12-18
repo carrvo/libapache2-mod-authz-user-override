@@ -62,7 +62,7 @@ static authz_status user_check_authorization(request_rec *r,
     require = ap_expr_str_exec(r, expr, &err);
     if (err) {
         ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
-                      "authz_user_override authorize: require user-uri: Can't "
+                      "authz_user_override authorize: require user-starts-with: Can't "
                       "evaluate require expression: %s", err);
         return AUTHZ_DENIED;
     }
@@ -111,7 +111,7 @@ static const authz_provider authz_user_override_provider =
 
 static void register_hooks(apr_pool_t *p)
 {
-    ap_register_auth_provider(p, AUTHZ_PROVIDER_GROUP, "user-uri",
+    ap_register_auth_provider(p, AUTHZ_PROVIDER_GROUP, "user-starts-with",
                               AUTHZ_PROVIDER_VERSION,
                               &authz_user_override_provider, AP_AUTH_INTERNAL_PER_CONF);
 }

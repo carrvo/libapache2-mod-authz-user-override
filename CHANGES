@@ -1,6 +1,6 @@
 string replace `authz_user` for `authz_user_override` 
 remove `validuser_check_authorization` and associated references
-modify `ap_register_auth_provider` from `user` to `user-uri`
+modify `ap_register_auth_provider` from `user` to `user-starts-with`
 rename local variables
 remove `APLOGNO` from log messages
 add a step to truncate the user for comparison
