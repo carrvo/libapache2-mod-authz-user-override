@@ -1,3 +1,3 @@
-mod mod_authz_user_override.so
-mod authz_user_override.load
+mod .libs/mod_authz_user_override.so
+mod debian/authz_user_override.load
 mod authz_user_override.conf

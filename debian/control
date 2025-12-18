@@ -14,7 +14,7 @@ Vcs-Git: https://github.com/carrvo/libapache2-mod-authz-user-override
 
 Package: libapache2-mod-authz-user-override
 Architecture: amd64
-Depends: ${misc:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
 Suggests: subversion, libapache2-mod-svn
 Homepage: https://github.com/carrvo/libapache2-mod-authz-user-override
 Description: This is a module to use SVN properties for Authorization (Authz) purposes,
