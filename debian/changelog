@@ -1,3 +1,9 @@
+libapache2-mod-authz-user-override (0.0.1) unstable; urgency=medium
+
+  * Fix bug where truncating too far
+
+ -- carrvo <carrvo@gmail.com>  Thu, 18 Dec 2025 20:05:23 -0700
+
 libapache2-mod-authz-user-override (0.0.0) unstable; urgency=medium
 
   * Initial release.
