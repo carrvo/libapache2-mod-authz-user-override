@@ -72,9 +72,12 @@ static authz_status user_check_authorization(request_rec *r,
     parsed_tmp = require;
     while ((require_word = ap_getword_conf(r->pool, &parsed_tmp)) && require_word[0]) {
         // truncate the user because it could be a sub-path of the provided value
-        word_len = strlen(require_word);
+        word_len = strlen(require_word) + 1;
         user_tmp = apr_pcalloc(r->pool, word_len*sizeof(char));
         (void)apr_cpystrn(user_tmp, r->user, word_len);
+        ap_log_rerror(APLOG_MARK, APLOG_TRACE4, 0, r,
+                      "require user-starts-with '%s': truncating "
+                      "'%s' to '%s'", require_word, r->user, user_tmp);
         if (!strcmp(user_tmp, require_word)) {
             return AUTHZ_GRANTED;
         }
